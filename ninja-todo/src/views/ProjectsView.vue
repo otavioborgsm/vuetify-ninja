@@ -20,15 +20,12 @@
 </template>
 
 <script>
+import db from '@/fb'
+
 export default {
   data(){
     return{
       projects: [
-        { title: 'Design a new website' , person: 'Otávio Borges' , due: '1st Jan 2019', status: 'ongoing', content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet cumque asperiores nam sapiente voluptates eum, assumenda ad odio iste. Culpa recusandae consequuntur officia corporis sint laudantium enim sed, error magni.' },
-        { title: 'Code up the homepage' , person: 'João Lucas' , due: '10th Jan 2019', status: 'complete', content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet cumque asperiores nam sapiente voluptates eum, assumenda ad odio iste. Culpa recusandae consequuntur officia corporis sint laudantium enim sed, error magni.' },
-        { title: 'Design video thumbnails' , person: 'Mateus Paulart' , due: '20th Dec 2018', status: 'complete', content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet cumque asperiores nam sapiente voluptates eum, assumenda ad odio iste. Culpa recusandae consequuntur officia corporis sint laudantium enim sed, error magni.' },
-        { title: 'Create a community forum' , person: 'João Dalagnol' , due: '20th Oct 2018', status: 'overdue', content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet cumque asperiores nam sapiente voluptates eum, assumenda ad odio iste. Culpa recusandae consequuntur officia corporis sint laudantium enim sed, error magni.' },
-        { title: 'Design a new website.. again' , person: 'Otávio Borges' , due: '1st Jan 2019', status: 'ongoing', content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet cumque asperiores nam sapiente voluptates eum, assumenda ad odio iste. Culpa recusandae consequuntur officia corporis sint laudantium enim sed, error magni.' },
       ]
     }
   },
@@ -38,7 +35,21 @@ export default {
         return project.person === 'Otávio Borges'
       })
     }
-  }
+  },
+  created(){
+      db.collection('projects').onSnapshot(res =>{
+        const changes = res.docChanges()
+
+        changes.forEach(change =>{
+          if (change.type === 'added') {
+            this.projects.push({
+              ...change.doc.data(),
+              id: change.doc.id
+            })
+          }
+        })
+      })
+    }
 }
 </script>
 

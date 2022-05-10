@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="500" :v-model="dialog">
       <template v-slot:activator="{ on }">
         <v-btn class="success" dark v-on="on">Add New Project</v-btn>
       </template>
@@ -19,7 +19,7 @@
                     <v-date-picker v-model="due" year-icon="mdi-calendar-blank" prev-icon="mdi-skip-previous" next-icon="mdi-skip-next"></v-date-picker>
                 </v-menu>
                 
-                <v-btn flat class="succes mx-0 mt-3" color="primary" @click="submit()">Add Project</v-btn>
+                <v-btn flat class="succes mx-0 mt-3" color="primary" @click="submit()" :loading="loading">Add Project</v-btn>
             </v-form>
         </v-card-text>
       </v-card>
@@ -38,22 +38,28 @@ export default {
             due: null,
             inputRules:[
                 v =>  v && v.length >= 3 || 'Minimum length is 3 characters'
-            ]
+            ],
+            loading: false,
+            dialog: false
         }
     },
     methods:{
         submit(){
             if (this.$refs.form.validate()){
+                this.loading = true
+
                 const project = {
                     title: this.title,
                     content: this.content,
                     due: moment(this.due).format("Do MMMM YYYY"),
-                    person: 'The Net Ninja',
+                    person: 'Otávio Borges',
                     status: 'ongoing'
                 }
 
                 db.collection('projects').add(project).then(()=>{
-                    console.log('added to db')
+                    this.loading = false
+                    this.dialog = false
+                    this.$emit('projectAdded')
                 })
             }
             
