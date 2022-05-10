@@ -52,8 +52,7 @@ export default {
                     status: 'ongoing'
                 }
 
-                db.collection('projects').add(project)
-                .then(()=>{
+                db.collection('projects').add(project).then(()=>{
                     console.log('added to db')
                 })
             }
